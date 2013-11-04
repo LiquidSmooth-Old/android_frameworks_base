@@ -226,4 +226,14 @@
     <!-- [CHAR LIMIT=40] Title of dialog that is shown when performing a system install. -->
     <string name="android_installing_title">LiquidSmooth is installing\u2026</string>
 
+    <!-- Reboot menu -->
+    <!-- Button to reboot the phone, within the Reboot Options dialog -->
+    <string name="reboot_reboot">Reboot</string>
+    <!-- Button to reboot the phone into recovery, within the Reboot Options dialog -->
+    <string name="reboot_recovery">Recovery</string>
+    <!-- Button to reboot the phone into bootloader, within the Reboot Options dialog -->
+    <string name="reboot_bootloader">Bootloader</string>
+    <!-- Button to soft reboot the device, within the Reboot Options dialog -->
+    <string name="reboot_soft">Soft reboot</string>
+
 </resources>
