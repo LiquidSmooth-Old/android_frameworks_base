@@ -2504,9 +2504,6 @@
     <string-array name="config_forceEnabledComponents" translatable="false">
     </string-array>
 
-    <!-- Boolean to enable stk functionality on Samsung phones -->
-    <bool name="config_samsung_stk">false</bool>
-
     <!-- If a dock provides a lid switch, that lid can be removed. This
          setting is used to determine, whether lidOpenRotation has to be
          applied. -->
@@ -2582,5 +2579,8 @@
     <!-- The BT name of the keyboard packaged with the device. If this is defined, SystemUI will
          automatically try to pair with it when the device exits tablet mode. -->
     <string translatable="false" name="config_packagedKeyboardName"></string>
+
+    <!-- Boolean to enable stk functionality on Samsung phones -->
+    <bool name="config_samsung_stk">false</bool>
 
 </resources>
