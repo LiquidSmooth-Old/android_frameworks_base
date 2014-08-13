@@ -38,6 +38,7 @@ import android.annotation.ChaosLab.Classification;
 import android.annotation.NonNull;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
+import android.app.ActivityOptions;
 import android.app.IActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -47,6 +48,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
@@ -128,6 +130,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.cm.ActionUtils;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.internal.util.slim.ActionConfig;
@@ -4657,6 +4660,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean handleLongPressBackRecents(View v) {
         try {
             boolean sendBackLongPress = false;
+            boolean hijackRecentsLongPress = false;
             IActivityManager activityManager = ActivityManagerNative.getDefault();
             boolean isAccessiblityEnabled = mAccessibilityManager.isEnabled();
             if (activityManager.isInLockTaskMode() && !isAccessiblityEnabled) {
@@ -4671,6 +4675,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     // If we aren't pressing recents right now then they presses
                     // won't be together, so send the standard long-press action.
                     sendBackLongPress = true;
+                } else if ((v.getId() == R.id.recent_apps)) {
+                    hijackRecentsLongPress = true;
                 }
             } else {
                 // If this is back still need to handle sending the long-press event.
@@ -4679,6 +4685,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     if (v.getId() == mNavigationBarView.getLeftMenuButton().getId()
                         || v.getId() == mNavigationBarView.getRightMenuButton().getId()) {
                         sendBackLongPress = true;
+                    } else if (v.getId() == R.id.recent_apps) {
+                        hijackRecentsLongPress = true;
                     }
                 } else if (isAccessiblityEnabled && activityManager.isInLockTaskMode()) {
                     // When in accessibility mode a long press that is recents (not back)
@@ -4688,11 +4696,39 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
                 mLastLockToAppLongPress = time;
             }
+
+            if (hijackRecentsLongPress) {
+                ActionUtils.switchToLastApp(mContext, mCurrentUserId);
+            }
+
             return sendBackLongPress;
         } catch (RemoteException e) {
             Log.d(TAG, "Unable to reach activity manager", e);
             return false;
         }
+    }
+
+    private ActivityManager.RunningTaskInfo getLastTask(final ActivityManager am) {
+        final String defaultHomePackage = resolveCurrentLauncherPackage();
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(5);
+
+        for (int i = 1; i < tasks.size(); i++) {
+            String packageName = tasks.get(i).topActivity.getPackageName();
+            if (!packageName.equals(defaultHomePackage)
+                    && !packageName.equals(mContext.getPackageName())) {
+                return tasks.get(i);
+            }
+        }
+
+        return null;
+    }
+
+    private String resolveCurrentLauncherPackage() {
+        final Intent launcherIntent = new Intent(Intent.ACTION_MAIN)
+                .addCategory(Intent.CATEGORY_HOME);
+        final PackageManager pm = mContext.getPackageManager();
+        final ResolveInfo launcherInfo = pm.resolveActivity(launcherIntent, 0);
+        return launcherInfo.activityInfo.packageName;
     }
 
     // Recents
