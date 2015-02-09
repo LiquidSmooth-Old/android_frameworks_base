@@ -109,6 +109,11 @@
         <group gid="media" />
     </permission>
 
+    <!-- CM hardware permission -->
+    <permission name="android.permission.HARDWARE_ABSTRACTION_ACCESS" >
+        <group gid="system" />
+    </permission>
+
     <!-- ================================================================== -->
     <!-- ================================================================== -->
     <!-- ================================================================== -->
