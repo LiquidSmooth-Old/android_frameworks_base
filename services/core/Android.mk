@@ -12,4 +12,8 @@ LOCAL_SRC_FILES += \
 LOCAL_JAVA_LIBRARIES := services.net telephony-common
 LOCAL_STATIC_JAVA_LIBRARIES := tzdata_update
 
+LOCAL_JAVA_LIBRARIES += services.accessibility
+
+LOCAL_JAVA_LIBRARIES += org.cyanogenmod.hardware
+
 include $(BUILD_STATIC_JAVA_LIBRARY)

@@ -348,7 +348,7 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                 if (bottom < screenBrightnessRangeMinimum) {
                     screenBrightnessRangeMinimum = bottom;
                 }
-                mAutomaticBrightnessController = new AutomaticBrightnessController(this,
+                mAutomaticBrightnessController = new AutomaticBrightnessController(mContext, this,
                         handler.getLooper(), sensorManager, screenAutoBrightnessSpline,
                         lightSensorWarmUpTimeConfig, screenBrightnessRangeMinimum,
                         mScreenBrightnessRangeMaximum, dozeScaleFactor, lightSensorRate,
