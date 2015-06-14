@@ -110,5 +110,7 @@
     <color name="notification_icon_color">#FFFFFFFF</color>
     <!-- Navigation button ripple color -->
     <color name="navbutton_ripple_color">#FFFFFFFF</color>
+    <!-- app sidebar trigger region color -->
+    <color name="trigger_region_color">#8015a0e5</color>
 
 </resources>
