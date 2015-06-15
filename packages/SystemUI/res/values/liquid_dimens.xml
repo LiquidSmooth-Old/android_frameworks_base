@@ -45,4 +45,7 @@
     <!-- Side padding for the Quick Settings panel -->
     <dimen name="qs_panel_side_padding">@dimen/notification_side_padding</dimen>
 
+    <!-- Padding end for weather text -->
+    <dimen name="status_bar_weather_padding_end">16dp</dimen>
+
 </resources>
