@@ -1104,7 +1104,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mExpandedContents = mStackScroller;
 
         mBackdrop = (BackDropView) mStatusBarWindow.findViewById(R.id.backdrop);
-        mBackdrop.setService(this);
+        mBackdrop.setService(this, mStackScroller);
         mBackdropFront = (ImageView) mBackdrop.findViewById(R.id.backdrop_front);
         mBackdropBack = (ImageView) mBackdrop.findViewById(R.id.backdrop_back);
 
@@ -4803,6 +4803,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public void requestVisualizer(boolean show, int delay) {
         mBackdrop.requestVisualizer(show, delay);
+    }
+
+    public void setVisualizerTouching(boolean touching) {
+        mBackdrop.setTouching(touching);
     }
 
     public void wakeUpIfDozing(long time, MotionEvent event) {
