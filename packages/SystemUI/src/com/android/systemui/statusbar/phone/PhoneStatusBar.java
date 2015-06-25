@@ -2357,6 +2357,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 artworkBitmap = mMediaMetadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
                 // might still be null
             }
+            mBackdrop.updateVisualizerColor(backdropBitmap);
         }
 
         final boolean hasArtwork = artworkBitmap != null;
