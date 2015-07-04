@@ -141,6 +141,9 @@
     <!-- Weather -->
     <uses-permission android:name="com.cyanogenmod.lockclock.permission.READ_WEATHER" />
 
+    <!-- LiveDisplay -->
+    <uses-permission android:name="android.permission.HARDWARE_ABSTRACTION_ACCESS" />
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"
