@@ -90,8 +90,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <!-- Slim Shortcut Actions -->
-    <string name="shortcut_picker">Slim Shortcuts</string>
+    <!-- Liquid Shortcut Actions -->
+    <string name="shortcut_picker">Liquid Shortcuts</string>
     <string name="shortcut_screenshot">Screenshot</string>
     <string name="shortcut_chamber">Chamber of Secrets</string>
     <string name="chamber_disabled">Chamber of secrets is closed</string>
