@@ -51,8 +51,7 @@ aaptSources := \
 aaptTests := \
     tests/AaptConfig_test.cpp \
     tests/AaptGroupEntry_test.cpp \
-    tests/ResourceFilter_test.cpp \
-    tests/ZipReading_test.cpp \
+    tests/ResourceFilter_test.cpp
 
 aaptCIncludes := \
     external/libpng \
@@ -106,8 +105,6 @@ include $(BUILD_HOST_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := aapt
-
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/mocks
 LOCAL_CFLAGS += $(aaptCFlags)
 LOCAL_CPPFLAGS += $(aaptCppFlags)
 LOCAL_LDLIBS += $(aaptHostLdLibs)
@@ -128,11 +125,7 @@ LOCAL_CPPFLAGS += $(aaptCppFlags)
 LOCAL_LDLIBS += $(aaptHostLdLibs)
 LOCAL_SRC_FILES += $(aaptTests)
 LOCAL_C_INCLUDES += $(LOCAL_PATH)
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/mocks
-LOCAL_STATIC_LIBRARIES += \
-    libaapt \
-    libgmock \
-    $(aaptHostStaticLibs)
+LOCAL_STATIC_LIBRARIES += libaapt $(aaptHostStaticLibs)
 
 include $(BUILD_HOST_NATIVE_TEST)
 

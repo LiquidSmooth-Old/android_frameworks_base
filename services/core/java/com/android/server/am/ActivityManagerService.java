@@ -2,7 +2,6 @@
  * Copyright (C) 2006-2008 The Android Open Source Project
  * Copyright (c) 2010-2014, The Linux Foundation. All rights reserved.
  * Not a Contribution.
- * This code has been modified.  Portions copyright (C) 2010, T-Mobile USA, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,7 +46,6 @@ import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManagerInternal;
 import android.appwidget.AppWidgetManager;
 import android.content.res.Resources;
-import android.content.res.ThemeConfig;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -61,7 +59,6 @@ import android.util.ArraySet;
 import android.util.SparseIntArray;
 
 import android.view.Display;
-import android.view.InflateException;
 import com.android.internal.R;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.app.IAppOpsService;
@@ -152,7 +149,6 @@ import android.content.pm.InstrumentationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ParceledListSlice;
-import android.content.pm.ThemeUtils;
 import android.content.pm.UserInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PathPermission;
@@ -161,7 +157,6 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
-import android.content.res.ThemeConfig;
 import android.net.Proxy;
 import android.net.ProxyInfo;
 import android.net.Uri;
@@ -374,8 +369,6 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     // How many bytes to write into the dropbox log before truncating
     static final int DROPBOX_MAX_SIZE = 256 * 1024;
-
-    static final String PROP_REFRESH_THEME = "sys.refresh_theme";
 
     // Access modes for handleIncomingUser.
     static final int ALLOW_NON_FULL = 0;
@@ -962,7 +955,6 @@ public final class ActivityManagerService extends ActivityManagerNative
     boolean mLaunchWarningShown = false;
 
     Context mContext;
-    Context mUiContext;
 
     int mFactoryTest;
 
@@ -1338,7 +1330,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                         return;
                     }
                     if (mShowDialogs && !mSleeping && !mShuttingDown) {
-                        Dialog d = new AppErrorDialog(getUiContext(),
+                        Dialog d = new AppErrorDialog(mContext,
                                 ActivityManagerService.this, res, proc);
                         d.show();
                         proc.crashDialog = d;
@@ -1373,7 +1365,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 
                     if (mShowDialogs) {
                         Dialog d = new AppNotRespondingDialog(ActivityManagerService.this,
-                                getUiContext(), proc, (ActivityRecord)data.get("activity"),
+                                mContext, proc, (ActivityRecord)data.get("activity"),
                                 msg.arg1 != 0);
                         d.show();
                         proc.anrDialog = d;
@@ -1399,7 +1391,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                     }
                     AppErrorResult res = (AppErrorResult) data.get("result");
                     if (mShowDialogs && !mSleeping && !mShuttingDown) {
-                        Dialog d = new StrictModeViolationDialog(getUiContext(),
+                        Dialog d = new StrictModeViolationDialog(mContext,
                                 ActivityManagerService.this, res, proc);
                         d.show();
                         proc.crashDialog = d;
@@ -1413,7 +1405,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             } break;
             case SHOW_FACTORY_ERROR_MSG: {
                 Dialog d = new FactoryErrorDialog(
-                    getUiContext(), msg.getData().getCharSequence("msg"));
+                    mContext, msg.getData().getCharSequence("msg"));
                 d.show();
                 ensureBootCompleted();
             } break;
@@ -1424,7 +1416,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                         if (!app.waitedForDebugger) {
                             Dialog d = new AppWaitingForDebuggerDialog(
                                     ActivityManagerService.this,
-                                    getUiContext(), app);
+                                    mContext, app);
                             app.waitDialog = d;
                             app.waitedForDebugger = true;
                             d.show();
@@ -1439,7 +1431,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             } break;
             case SHOW_UID_ERROR_MSG: {
                 if (mShowDialogs) {
-                    AlertDialog d = new BaseErrorDialog(getUiContext());
+                    AlertDialog d = new BaseErrorDialog(mContext);
                     d.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
                     d.setCancelable(false);
                     d.setTitle(mContext.getText(R.string.android_system_label));
@@ -1641,7 +1633,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                     notification.vibrate = null;
                     notification.color = mContext.getResources().getColor(
                             com.android.internal.R.color.system_notification_accent_color);
-                    notification.setLatestEventInfo(getUiContext(), text,
+                    notification.setLatestEventInfo(context, text,
                             mContext.getText(R.string.heavy_weight_notification_detail),
                             PendingIntent.getActivityAsUser(mContext, 0, root.intent,
                                     PendingIntent.FLAG_CANCEL_CURRENT, null,
@@ -2422,15 +2414,6 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
-    private Context getUiContext() {
-        synchronized (this) {
-            if (mUiContext == null && mBooted) {
-                mUiContext = ThemeUtils.createUiContext(mContext);
-            }
-            return mUiContext != null ? mUiContext : mContext;
-        }
-    }
-
     /**
      * Initialize the application bind args. These are passed to each
      * process when the bindApplication() IPC is sent to the process. They're
@@ -3088,13 +3071,6 @@ public final class ActivityManagerService extends ActivityManagerNative
                 debugFlags |= Zygote.DEBUG_ENABLE_ASSERT;
             }
 
-            //Check if zygote should refresh its fonts
-            boolean refreshTheme = false;
-            if (SystemProperties.getBoolean(PROP_REFRESH_THEME, false)) {
-                SystemProperties.set(PROP_REFRESH_THEME, "false");
-                refreshTheme = true;
-            }
-
             String requiredAbi = (abiOverride != null) ? abiOverride : app.info.primaryCpuAbi;
             if (requiredAbi == null) {
                 requiredAbi = Build.SUPPORTED_ABIS[0];
@@ -3117,7 +3093,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             Process.ProcessStartResult startResult = Process.start(entryPoint,
                     app.processName, uid, uid, gids, debugFlags, mountExternal,
                     app.info.targetSdkVersion, app.info.seinfo, requiredAbi, instructionSet,
-                    app.info.dataDir, refreshTheme, entryPointArgs);
+                    app.info.dataDir, entryPointArgs);
             checkTime(startTime, "startProcess: returned from zygote!");
 
             if (app.isolated) {
@@ -5224,7 +5200,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 @Override
                 public void run() {
                     synchronized (ActivityManagerService.this) {
-                        final Dialog d = new LaunchWarningWindow(getUiContext(), cur, next);
+                        final Dialog d = new LaunchWarningWindow(mContext, cur, next);
                         d.show();
                         mUiHandler.postDelayed(new Runnable() {
                             @Override
@@ -6321,13 +6297,6 @@ public final class ActivityManagerService extends ActivityManagerNative
                 }
             }
         }, pkgFilter);
-
-        ThemeUtils.registerThemeChangeReceiver(mContext, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mUiContext = null;
-            }
-        });
 
         // Let system services know.
         mSystemServiceManager.startBootPhase(SystemService.PHASE_BOOT_COMPLETED);
@@ -11686,28 +11655,6 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
-    private void sendAppFailureBroadcast(String pkgName) {
-        Intent intent = new Intent(Intent.ACTION_APP_FAILURE,
-                (pkgName != null)? Uri.fromParts("package", pkgName, null) : null);
-        mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT_OR_SELF);
-    }
-
-    /**
-     * A possible theme crash is one that throws one of the following exceptions
-     * {@link android.content.res.Resources.NotFoundException}
-     * {@link android.view.InflateException}
-     *
-     * @param exceptionClassName
-     * @return True if exceptionClassName is one of the above exceptions
-     */
-    private boolean isPossibleThemeCrash(String exceptionClassName) {
-        if (Resources.NotFoundException.class.getName().equals(exceptionClassName) ||
-                InflateException.class.getName().equals(exceptionClassName)) {
-            return true;
-        }
-        return false;
-    }
-
     private boolean handleAppCrashLocked(ProcessRecord app, String shortMsg, String longMsg,
             String stackTrace) {
         long now = SystemClock.uptimeMillis();
@@ -11718,9 +11665,6 @@ public final class ActivityManagerService extends ActivityManagerNative
         } else {
             crashTime = null;
         }
-
-        if (isPossibleThemeCrash(shortMsg)) sendAppFailureBroadcast(app.info.packageName);
-
         if (crashTime != null && now < crashTime+ProcessList.MIN_CRASH_INTERVAL) {
             // This process loses!
             Slog.w(TAG, "Process " + app.info.processName
@@ -16861,9 +16805,6 @@ public final class ActivityManagerService extends ActivityManagerNative
         synchronized(this) {
             ci = new Configuration(mConfiguration);
             ci.userSetLocale = false;
-            if (ci.themeConfig == null) {
-                ci.themeConfig = ThemeConfig.getBootTheme(mContext.getContentResolver());
-            }
         }
         return ci;
     }
@@ -16933,11 +16874,6 @@ public final class ActivityManagerService extends ActivityManagerNative
                     saveLocaleLocked(values.locale, 
                                      !values.locale.equals(mConfiguration.locale),
                                      values.userSetLocale);
-                }
-
-                if (values.themeConfig != null) {
-                    saveThemeResourceLocked(values.themeConfig,
-                            !values.themeConfig.equals(mConfiguration.themeConfig));
                 }
 
                 mConfigurationSeq++;
@@ -17098,14 +17034,6 @@ public final class ActivityManagerService extends ActivityManagerNative
             return null;
         }
         return srec.launchedFromPackage;
-    }
-
-    private void saveThemeResourceLocked(ThemeConfig t, boolean isDiff){
-        if(isDiff) {
-            Settings.Secure.putStringForUser(mContext.getContentResolver(),
-                    Configuration.THEME_PKG_CONFIGURATION_PERSISTENCE_PROPERTY, t.toJson(),
-                    UserHandle.USER_CURRENT);
-        }
     }
 
     // =========================================================

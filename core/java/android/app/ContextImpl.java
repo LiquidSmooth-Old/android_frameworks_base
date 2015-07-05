@@ -21,8 +21,6 @@ import android.app.usage.UsageStatsManager;
 import android.appwidget.AppWidgetManager;
 import android.hardware.ITorchService;
 import android.hardware.TorchManager;
-import android.content.res.IThemeService;
-import android.content.res.ThemeManager;
 import android.os.Build;
 import android.service.persistentdata.IPersistentDataBlockService;
 import android.service.persistentdata.PersistentDataBlockManager;
@@ -786,14 +784,6 @@ class ContextImpl extends Context {
             public Object createService(ContextImpl ctx) {
                 return new CmHardwareManager(ctx);
             }});
-
-        registerService(THEME_SERVICE, new ServiceFetcher() {
-            public Object createService(ContextImpl ctx) {
-                IBinder b = ServiceManager.getService(THEME_SERVICE);
-                IThemeService service = IThemeService.Stub.asInterface(b);
-                return new ThemeManager(ctx.getOuterContext(),
-                        service);
-            }});
     }
 
     static ContextImpl getImpl(Context context) {
@@ -870,13 +860,6 @@ class ContextImpl extends Context {
             mTheme.applyStyle(mThemeResource, true);
         }
         return mTheme;
-    }
-
-    @Override
-    public void recreateTheme() {
-        Resources.Theme newTheme = mResources.newTheme();
-        newTheme.applyStyle(mThemeResource, true);
-        mTheme.setTo(newTheme);
     }
 
     @Override
@@ -2159,19 +2142,13 @@ class ContextImpl extends Context {
     @Override
     public Context createApplicationContext(ApplicationInfo application, int flags)
             throws NameNotFoundException {
-        return createApplicationContext(application, null, flags);
-    }
-
-    @Override
-    public Context createApplicationContext(ApplicationInfo application, String themePackageName,
-            int flags) throws NameNotFoundException {
         LoadedApk pi = mMainThread.getPackageInfo(application, mResources.getCompatibilityInfo(),
                 flags | CONTEXT_REGISTER_PACKAGE);
         if (pi != null) {
             final boolean restricted = (flags & CONTEXT_RESTRICTED) == CONTEXT_RESTRICTED;
             ContextImpl c = new ContextImpl(this, mMainThread, pi, mActivityToken,
                     new UserHandle(UserHandle.getUserId(application.uid)), restricted,
-                    mDisplay, mOverrideConfiguration, themePackageName);
+                    mDisplay, mOverrideConfiguration);
             if (c.mResources != null) {
                 return c;
             }
@@ -2184,30 +2161,24 @@ class ContextImpl extends Context {
     @Override
     public Context createPackageContext(String packageName, int flags)
             throws NameNotFoundException {
-        return createPackageContextAsUser(packageName, null, flags,
+        return createPackageContextAsUser(packageName, flags,
                 mUser != null ? mUser : Process.myUserHandle());
     }
 
     @Override
     public Context createPackageContextAsUser(String packageName, int flags, UserHandle user)
             throws NameNotFoundException {
-        return createPackageContextAsUser(packageName, null, flags, user);
-    }
-
-    @Override
-    public Context createPackageContextAsUser(String packageName, String themePackageName,
-            int flags, UserHandle user) throws NameNotFoundException {
         final boolean restricted = (flags & CONTEXT_RESTRICTED) == CONTEXT_RESTRICTED;
         if (packageName.equals("system") || packageName.equals("android")) {
             return new ContextImpl(this, mMainThread, mPackageInfo, mActivityToken,
-                    user, restricted, mDisplay, mOverrideConfiguration, themePackageName);
+                    user, restricted, mDisplay, mOverrideConfiguration);
         }
 
         LoadedApk pi = mMainThread.getPackageInfo(packageName, mResources.getCompatibilityInfo(),
                 flags | CONTEXT_REGISTER_PACKAGE, user.getIdentifier());
         if (pi != null) {
             ContextImpl c = new ContextImpl(this, mMainThread, pi, mActivityToken,
-                    user, restricted, mDisplay, mOverrideConfiguration, themePackageName);
+                    user, restricted, mDisplay, mOverrideConfiguration);
             if (c.mResources != null) {
                 return c;
             }
@@ -2279,7 +2250,7 @@ class ContextImpl extends Context {
     static ContextImpl createSystemContext(ActivityThread mainThread) {
         LoadedApk packageInfo = new LoadedApk(mainThread);
         ContextImpl context = new ContextImpl(null, mainThread,
-                packageInfo, null, null, false, null, null, null);
+                packageInfo, null, null, false, null, null);
         context.mResources.updateConfiguration(context.mResourcesManager.getConfiguration(),
                 context.mResourcesManager.getDisplayMetricsLocked(Display.DEFAULT_DISPLAY));
         return context;
@@ -2288,7 +2259,7 @@ class ContextImpl extends Context {
     static ContextImpl createAppContext(ActivityThread mainThread, LoadedApk packageInfo) {
         if (packageInfo == null) throw new IllegalArgumentException("packageInfo");
         return new ContextImpl(null, mainThread,
-                packageInfo, null, null, false, null, null, null);
+                packageInfo, null, null, false, null, null);
     }
 
     static ContextImpl createActivityContext(ActivityThread mainThread,
@@ -2296,19 +2267,12 @@ class ContextImpl extends Context {
         if (packageInfo == null) throw new IllegalArgumentException("packageInfo");
         if (activityToken == null) throw new IllegalArgumentException("activityInfo");
         return new ContextImpl(null, mainThread,
-                packageInfo, activityToken, null, false, null, null, null);
+                packageInfo, activityToken, null, false, null, null);
     }
 
     private ContextImpl(ContextImpl container, ActivityThread mainThread,
             LoadedApk packageInfo, IBinder activityToken, UserHandle user, boolean restricted,
             Display display, Configuration overrideConfiguration) {
-        this(container, mainThread, packageInfo, activityToken, user, restricted, display,
-                overrideConfiguration, null);
-    }
-
-    private ContextImpl(ContextImpl container, ActivityThread mainThread,
-            LoadedApk packageInfo, IBinder activityToken, UserHandle user, boolean restricted,
-            Display display, Configuration overrideConfiguration, String themePackageName) {
         mOuterContext = this;
 
         mMainThread = mainThread;
@@ -2338,19 +2302,15 @@ class ContextImpl extends Context {
 
         Resources resources = packageInfo.getResources(mainThread);
         if (resources != null) {
-            if (activityToken != null || themePackageName != null
+            if (activityToken != null
                     || displayId != Display.DEFAULT_DISPLAY
                     || overrideConfiguration != null
                     || (compatInfo != null && compatInfo.applicationScale
                             != resources.getCompatibilityInfo().applicationScale)) {
-                resources = themePackageName == null ? mResourcesManager.getTopLevelResources(
-                        packageInfo.getResDir(), packageInfo.getSplitResDirs(),
-                        packageInfo.getOverlayDirs(),
+                resources = mResourcesManager.getTopLevelResources(packageInfo.getResDir(),
+                        packageInfo.getSplitResDirs(), packageInfo.getOverlayDirs(),
                         packageInfo.getApplicationInfo().sharedLibraryFiles, displayId,
-                        packageInfo.getAppDir(), overrideConfiguration, compatInfo, activityToken,
-                        mOuterContext) :
-                mResourcesManager.getTopLevelThemedResources(packageInfo.getResDir(), displayId,
-                        packageInfo.getPackageName(), themePackageName, compatInfo ,activityToken);
+                        overrideConfiguration, compatInfo, activityToken);
             }
         }
         mResources = resources;

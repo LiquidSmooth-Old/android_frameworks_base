@@ -40,8 +40,6 @@ public class StackScrollAlgorithm {
     private static final int MAX_ITEMS_IN_BOTTOM_STACK = 3;
     private static final int MAX_ITEMS_IN_TOP_STACK = 3;
 
-    private static final int DEFAULT_CORNER_RADIUS = 2;
-
     public static final float DIMMED_SCALE = 0.95f;
 
     private int mPaddingBetweenElements;
@@ -75,7 +73,6 @@ public class StackScrollAlgorithm {
     private boolean mIsSmallScreen;
     private int mMaxNotificationHeight;
     private boolean mScaleDimmed;
-    private boolean mPerformClipping;
 
     public StackScrollAlgorithm(Context context) {
         initConstants(context);
@@ -130,12 +127,6 @@ public class StackScrollAlgorithm {
                 R.dimen.notification_collapse_second_card_padding);
         mScaleDimmed = context.getResources().getDisplayMetrics().densityDpi
                 >= DisplayMetrics.DENSITY_XXHIGH;
-
-        // We don't want to clip the notification if a theme overrides the corner radius with
-        // a value larger than the default.
-        mPerformClipping = context.getResources()
-                .getDimension(R.dimen.notification_material_rounded_rect_radius) <=
-                DEFAULT_CORNER_RADIUS * context.getResources().getDisplayMetrics().density;
     }
 
     public boolean shouldScaleDimmed() {
@@ -223,7 +214,7 @@ public class StackScrollAlgorithm {
                     // corners of the notifications, but only if we are not fully overlapped by
                     // the top card.
                     float clippingCorrection = state.dimmed
-                            ? (mPerformClipping ? 0 : newHeight)
+                            ? 0
                             : mRoundedRectCornerRadius * state.scale;
                     clipHeight += clippingCorrection;
                 }
