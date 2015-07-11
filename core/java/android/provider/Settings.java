@@ -3304,6 +3304,12 @@ public final class Settings {
         public static final String KEY_BACK_DOUBLE_TAP_ACTION = "key_back_double_tap_action";
 
         /**
+         * show carrier in statusbae while on lockscreen. The value is
+         * int (1: Show or 0: Hide).
+         */
+        public static final String LOCK_SCREEN_HIDE_CARRIER = "lock_screen_hide_carrier";
+
+        /**
          * Action to perform when the home key is pressed. (default: ACTION_HOME)
          * (See ButtonsConstants.java for valid values)
          * @hide
