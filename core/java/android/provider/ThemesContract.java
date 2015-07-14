@@ -295,13 +295,6 @@ public class ThemesContract {
          */
         public static final String COL_UPDATE_TIME = "update_time";
 
-        /*
-         * The unique ID for the component within a theme.
-         * Always 0 unless multiples of a component exist.
-         * <P>Type: INTEGER (long)</P>
-         */
-        public static final String COL_COMPONENT_ID = "component_id";
-
         /**
          * Valid keys
          */
@@ -474,7 +467,7 @@ public class ThemesContract {
         public static final String COMPONENT_ID = "component_id";
 
         /**
-         * The unique key for a row. See the KEY_* constants
+         * The unique key for a row. See the Valid key constants section below
          * for valid examples
          * <P>Type: TEXT</P>
          */
@@ -489,64 +482,6 @@ public class ThemesContract {
         /**
          * Valid keys
          */
-        public static final String KEY_STATUSBAR_BACKGROUND = "statusbar_background";
-        public static final String KEY_STATUSBAR_BLUETOOTH_ICON = "statusbar_bluetooth_icon";
-        public static final String KEY_STATUSBAR_WIFI_ICON = "statusbar_wifi_icon";
-        public static final String KEY_STATUSBAR_SIGNAL_ICON = "statusbar_signal_icon";
-        public static final String KEY_STATUSBAR_BATTERY_PORTRAIT = "statusbar_battery_portrait";
-        public static final String KEY_STATUSBAR_BATTERY_LANDSCAPE = "statusbar_battery_landscape";
-        public static final String KEY_STATUSBAR_BATTERY_CIRCLE = "statusbar_battery_circle";
-        public static final String KEY_STATUSBAR_CLOCK_TEXT_COLOR = "statusbar_clock_text_color";
-        public static final String KEY_STATUSBAR_WIFI_COMBO_MARGIN_END =
-                "statusbar_wifi_combo_margin_end";
-        public static final String KEY_NAVBAR_BACKGROUND = "navbar_background";
-        public static final String KEY_NAVBAR_BACK_BUTTON = "navbar_back_button";
-        public static final String KEY_NAVBAR_HOME_BUTTON = "navbar_home_button";
-        public static final String KEY_NAVBAR_RECENT_BUTTON = "navbar_recent_button";
-        public static final String KEY_ICON_PREVIEW_1 = "icon_preview_1";
-        public static final String KEY_ICON_PREVIEW_2 = "icon_preview_2";
-        public static final String KEY_ICON_PREVIEW_3 = "icon_preview_3";
-        // KEY_WALLPAPER_FULL - path to the full-sized image in the theme assets directory
-        public static final String KEY_WALLPAPER_FULL = "wallpaper_full";
-        // KEY_WALLPAPER_PREVIEW - scaled and cropped version of the full size wallpaper
-        public static final String KEY_WALLPAPER_PREVIEW = "wallpaper_preview";
-        // KEY_WALLPAPER_THUMBNAIL - scaled version of the preview size wallpaper
-        public static final String KEY_WALLPAPER_THUMBNAIL = "wallpaper_thumbnail";
-        // KEY_LOCK_WALLPAPER_PREVIEW - scaled and cropped version of the full size wallpaper
-        public static final String KEY_LOCK_WALLPAPER_PREVIEW = "lock_wallpaper_preview";
-        // KEY_LOCK_WALLPAPER_THUMBNAIL - scaled version of the preview size wallpaper
-        public static final String KEY_LOCK_WALLPAPER_THUMBNAIL = "lock_wallpaper_thumbnail";
-        public static final String KEY_STYLE_PREVIEW = "style_preview";
-        public static final String KEY_STYLE_THUMBNAIL = "style_thumbnail";
-        public static final String KEY_BOOTANIMATION_THUMBNAIL = "bootanimation_thumbnail";
-    }
-
-    /**
-     * The following is being depricated in version 15. Only present for build compatibility.
-     * Table containing cached preview blobs for a given theme
-     */
-    public static class LegacyPreviewColumns {
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "previews");
-
-        /**
-         * Uri for retrieving the previews for the currently applied components.
-         * Querying the themes provider using this URI will return a cursor with a single row
-         * containing all the previews for the components that are currently applied.
-         */
-        public static final Uri APPLIED_URI = Uri.withAppendedPath(AUTHORITY_URI,
-                "applied_previews");
-
-        /**
-         * The unique ID for a row.
-         * <P>Type: INTEGER (long)</P>
-         */
-        public static final String _ID = "_id";
-
-        /**
-         * The unique ID for the theme these previews belong to.
-         * <P>Type: INTEGER (long)</P>
-         */
-        public static final String THEME_ID = "theme_id";
 
         /**
          * Cached image of the themed status bar background.

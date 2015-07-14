@@ -452,7 +452,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 R.string.bugreport_title) {
 
             public void onPress() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getUiContext);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle(com.android.internal.R.string.bugreport_title);
                 builder.setMessage(com.android.internal.R.string.bugreport_message);
                 builder.setNegativeButton(com.android.internal.R.string.cancel, null);

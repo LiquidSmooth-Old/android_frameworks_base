@@ -521,12 +521,8 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
     @Override
     public void setLayoutDirection(int layoutDirection) {
-<<<<<<< HEAD
-        getIcons(getContext().getResources());
-        updateSettings();
-=======
         getIcons(mThemedResources != null ? mThemedResources : getContext().getResources());
->>>>>>> ce26ff3... Themes: Port to CM12 [1/6]
+        updateSettings();
 
         super.setLayoutDirection(layoutDirection);
     }
@@ -802,7 +798,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
 
         mNavigationIconHints = hints;
 
-<<<<<<< HEAD
         final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0
                     && !mImeArrowVisibility);
         if (getImeSwitchButton() != null) {
@@ -814,21 +809,6 @@ public class NavigationBarView extends LinearLayout implements BaseStatusBar.Nav
         getLeftImeArrowButton().setVisibility(mIsImeArrowVisible ? View.VISIBLE : View.GONE);
         getRightImeArrowButton().setVisibility(mIsImeArrowVisible ? View.VISIBLE : View.GONE);
 
-=======
-        ((ImageView)getBackButton()).setImageDrawable(null);
-        ((ImageView)getBackButton()).setImageDrawable(mVertical ? mBackLandIcon : mBackIcon);
-        mBackLandIcon.setImeVisible(backAlt);
-        mBackIcon.setImeVisible(backAlt);
-
-        ((ImageView)getRecentsButton()).setImageDrawable(mVertical ? mRecentLandIcon : mRecentIcon);
-        ((ImageView)getHomeButton()).setImageDrawable(mVertical ? mHomeLandIcon : mHomeIcon);
-
-        final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
-        getImeSwitchButton().setVisibility(showImeButton ? View.VISIBLE : View.INVISIBLE);
-        // Update menu button in case the IME state has changed.
-        setMenuVisibility(mShowMenu, true);
-
->>>>>>> ce26ff3... Themes: Port to CM12 [1/6]
         setDisabledFlags(mDisabledFlags, true);
     }
 

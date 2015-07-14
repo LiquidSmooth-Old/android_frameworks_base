@@ -442,16 +442,11 @@ public class PackageManagerService extends IPackageManager.Stub {
     // as the lock for the global state.  Methods that must be called with
     // this lock held have the prefix "LP".
     final ArrayMap<String, PackageParser.Package> mPackages =
-            new ArrayMap<String, PackageParser.Package>();
+                new ArrayMap<String, PackageParser.Package>();
 
-    // Tracks available target package names -> overlay package paths.
-    final ArrayMap<String, ArrayMap<String, PackageParser.Package>> mOverlays =
-        new ArrayMap<String, ArrayMap<String, PackageParser.Package>>();
-
-    // Example: com.angrybirds -> (com.theme1 -> theme1pkg, com.theme2 -> theme2pkg)
-    //          com.facebook   -> (com.theme1 -> theme1pkg)
-    final ArrayMap<String, ArrayMap<String, PackageParser.Package>> mOverlays =
-        new ArrayMap<String, ArrayMap<String, PackageParser.Package>>();
+    // Tracks available target package names -> overlay package paths. 
+    final ArrayMap<String, ArrayMap<String, PackageParser.Package>> mOverlays = 
+            new ArrayMap<String, ArrayMap<String, PackageParser.Package>>(); 
 
     final Settings mSettings;
     boolean mRestoredSettings;
@@ -554,7 +549,7 @@ public class PackageManagerService extends IPackageManager.Stub {
     final ResolveInfo mPreLaunchCheckResolveInfo = new ResolveInfo();
     ComponentName mCustomPreLaunchComponentName;
     private Set<String> mPreLaunchCheckPackages =
-            Collections.synchronizedSet(new HashSet<String>());
+            Collections.synchronizedSet(new ArraySet<String>());
 
     boolean mPreLaunchCheckPackagesReplaced = false;
 

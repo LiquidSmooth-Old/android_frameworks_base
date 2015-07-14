@@ -23,6 +23,7 @@ import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.content.res.ThemeConfig;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;

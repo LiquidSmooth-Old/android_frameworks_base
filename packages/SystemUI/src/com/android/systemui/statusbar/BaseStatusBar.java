@@ -117,7 +117,6 @@ import com.android.systemui.chaos.lab.gestureanywhere.GestureAnywhereView;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.AppSidebar;
 import com.android.systemui.statusbar.appcirclesidebar.AppCircleSidebar;
-import com.android.systemui.statusbar.phone.KeyguardTouchDelegate;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 import com.android.systemui.statusbar.policy.HeadsUpNotificationView;

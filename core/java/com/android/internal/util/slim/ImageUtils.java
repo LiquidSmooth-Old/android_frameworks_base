@@ -180,8 +180,7 @@ public class ImageUtils {
      *
      * @return a new InputStream of the cropped image/*"
      */
-    public static InputStream getCroppedWallpaperStream(String pkgName, long wallpaperId,
-            Context context) {
+    public static InputStream getCroppedWallpaperStream(String pkgName, Context context) {
         if (TextUtils.isEmpty(pkgName)) {
             throw new IllegalArgumentException("'pkgName' cannot be null or empty!");
         }
@@ -192,7 +191,7 @@ public class ImageUtils {
         InputStream cropped = null;
         InputStream stream = null;
         try {
-            stream = getOriginalWallpaperStream(pkgName, wallpaperId, context);
+            stream = getOriginalWallpaperStream(pkgName, context);
             if (stream == null) {
                 return null;
             }
@@ -204,7 +203,7 @@ public class ImageUtils {
             WallpaperManager wm = WallpaperManager.getInstance(context);
             int outWidth = wm.getDesiredMinimumWidth();
             int outHeight = wm.getDesiredMinimumHeight();
-            stream = getOriginalWallpaperStream(pkgName, wallpaperId, context);
+            stream = getOriginalWallpaperStream(pkgName, context);
             if (stream == null) {
                 return null;
             }
@@ -241,9 +240,7 @@ public class ImageUtils {
         return inputStream;
     }
 
-    private static InputStream getOriginalWallpaperStream(String pkgName, long componentId,
-            Context context) {
-        String wpPath;
+    private static InputStream getOriginalWallpaperStream(String pkgName, Context context) {
         if (TextUtils.isEmpty(pkgName) || context == null) {
             return null;
         }
@@ -280,8 +277,7 @@ public class ImageUtils {
                 Context themeCtx = context.createPackageContext(pkgName,
                         Context.CONTEXT_IGNORE_SECURITY);
                 AssetManager assetManager = themeCtx.getAssets();
-                wpPath = queryWpPathFromComponentId(context, pkgName, componentId);
-                if (wpPath == null) wpPath = ThemeUtils.getWallpaperPath(assetManager);
+                String wpPath = ThemeUtils.getWallpaperPath(assetManager);
                 if (wpPath == null) {
                     Log.e(TAG, "Not setting wp because wallpaper file was not found.");
                 } else {
@@ -296,37 +292,6 @@ public class ImageUtils {
         }
 
         return inputStream;
-    }
-
-    private static String queryWpPathFromComponentId(Context context, String pkgName,
-            long componentId) {
-        String wpPath = null;
-        String[] projection = new String[] { ThemesContract.PreviewColumns.COL_VALUE };
-        String selection = ThemesColumns.PKG_NAME + "=? AND " +
-                ThemesContract.PreviewColumns.COMPONENT_ID + "=? AND " +
-                ThemesContract.PreviewColumns.COL_KEY + "=?";
-        String[] selectionArgs = new String[] {
-                pkgName,
-                Long.toString(componentId),
-                ThemesContract.PreviewColumns.WALLPAPER_FULL
-        };
-
-        Cursor c = context.getContentResolver()
-                .query(ThemesContract.PreviewColumns.COMPONENTS_URI,
-                        projection, selection, selectionArgs, null);
-        if (c != null) {
-            try {
-                if (c.moveToFirst()) {
-                    int valIdx = c.getColumnIndex(ThemesContract.PreviewColumns.COL_VALUE);
-                    wpPath = c.getString(valIdx);
-                }
-            } catch(Exception e) {
-                Log.e(TAG, "Could not get wallpaper path", e);
-            } finally {
-                c.close();
-            }
-        }
-        return wpPath;
     }
 }
 

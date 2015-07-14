@@ -4061,7 +4061,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             showKeyguard();
             // The following views need to be invisible if the keyguard is showing
             // These views were hidden but re-inflating the status bar changed them back to visible
-            mClockView.setVisibility(View.INVISIBLE);
             mNotificationIconArea.setVisibility(View.INVISIBLE);
             mSystemIconArea.setVisibility(View.INVISIBLE);
         }
