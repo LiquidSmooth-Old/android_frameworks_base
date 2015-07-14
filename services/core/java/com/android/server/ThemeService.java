@@ -67,7 +67,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.internal.R;
-import com.android.internal.util.cm.ImageUtils;
+import com.android.internal.util.slim.ImageUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
