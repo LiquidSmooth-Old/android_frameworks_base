@@ -564,7 +564,6 @@
     <!-- Screen pinning inner nav bar outer circle size -->
     <dimen name="screen_pinning_nav_highlight_outer_size">84dp</dimen>
 
-<<<<<<< HEAD
     <!-- Pie controls -->
     <!-- Padding between the pie controls and the screen border -->
     <dimen name="pie_padding">4dp</dimen>
