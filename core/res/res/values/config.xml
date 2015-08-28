@@ -2296,4 +2296,8 @@
     <!-- The list of components which should be forced to be enabled. -->
     <string-array name="config_forceEnabledComponents" translatable="false">
     </string-array>
+
+    <!--Dummy for CMs wakekeys-->
+    <integer name="config_deviceHardwareWakeKeys">0</integer>
+
 </resources>
