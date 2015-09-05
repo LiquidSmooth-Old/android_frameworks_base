@@ -133,9 +133,6 @@
     <string name="perf_profile_bal">Balanced</string>
     <string name="perf_profile_perf">Performance</string>
 
-    <!-- Title of dialog to confirm rebooting. -->
-    <string name="reboot_title">Reboot</string>
-
     <!-- Button to reboot the phone, within the Phone Options dialog -->
     <string name="reboot_system" product="tablet">Reboot tablet</string>
     <string name="reboot_system" product="default">Reboot phone</string>
