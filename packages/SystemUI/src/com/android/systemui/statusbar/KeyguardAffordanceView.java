@@ -22,17 +22,11 @@ import android.animation.ArgbEvaluator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -45,7 +39,7 @@ import com.android.systemui.R;
  * An ImageView which does not have overlapping renderings commands and therefore does not need a
  * layer when alpha is changed.
  */
-public class KeyguardAffordanceView extends ImageView implements Palette.PaletteAsyncListener {
+public class KeyguardAffordanceView extends ImageView {
 
     private static final long CIRCLE_APPEAR_DURATION = 80;
     private static final long CIRCLE_DISAPPEAR_MAX_DURATION = 200;
@@ -112,8 +106,6 @@ public class KeyguardAffordanceView extends ImageView implements Palette.Palette
         }
     };
 
-    private ColorFilter mDefaultFilter;
-
     public KeyguardAffordanceView(Context context) {
         this(context, null);
     }
@@ -169,34 +161,10 @@ public class KeyguardAffordanceView extends ImageView implements Palette.Palette
         canvas.restore();
     }
 
-    @Override
-    public void setImageDrawable(Drawable drawable) {
-        super.setImageDrawable(drawable);
-        doPaletteIfNecessary();
-    }
-
-    private void doPaletteIfNecessary() {
-        if (mDefaultFilter != null && getDrawable() instanceof BitmapDrawable) {
-            Palette.generateAsync(((BitmapDrawable) getDrawable()).getBitmap(), this);
-        }
-    }
-
     public void setPreviewView(View v) {
         mPreviewView = v;
         if (mPreviewView != null) {
             mPreviewView.setVisibility(INVISIBLE);
-            addOverlay();
-        }
-    }
-
-    private void addOverlay() {
-        if (mPreviewView != null) {
-            mPreviewView.getOverlay().clear();
-            if (mDefaultFilter != null) {
-                ColorDrawable d = new ColorDrawable(mCircleColor);
-                d.setBounds(0, 0, mPreviewView.getWidth(), mPreviewView.getHeight());
-                mPreviewView.getOverlay().add(d);
-            }
         }
     }
 
@@ -216,26 +184,12 @@ public class KeyguardAffordanceView extends ImageView implements Palette.Palette
         }
     }
 
-    public void setDefaultFilter(ColorFilter filter) {
-        mDefaultFilter = filter;
-        mCircleColor = Color.WHITE;
-        addOverlay();
-    }
-
     private void updateIconColor() {
         Drawable drawable = getDrawable().mutate();
         float alpha = mCircleRadius / mMinBackgroundRadius;
         alpha = Math.min(1.0f, alpha);
         int color = (int) mColorInterpolator.evaluate(alpha, mNormalColor, mInverseColor);
-        if (mDefaultFilter != null) {
-            if (alpha == 0) {
-                drawable.setColorFilter(mDefaultFilter);
-            } else {
-                drawable.setColorFilter(color, PorterDuff.Mode.DST_IN);
-            }
-        } else {
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-        }
+        drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 
     private void drawBackgroundCircle(Canvas canvas) {
@@ -551,11 +505,5 @@ public class KeyguardAffordanceView extends ImageView implements Palette.Palette
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void onGenerated(Palette palette) {
-        mCircleColor = palette.getDarkVibrantColor(Color.WHITE);
-        addOverlay();
     }
 }
