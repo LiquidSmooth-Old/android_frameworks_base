@@ -1378,6 +1378,11 @@ public class AppOpsManager {
         private final int mIgnoredCount;
 
         public OpEntry(int op, int mode, long time, long rejectTime, int duration,
+                       int proxyUid, String proxyPackage) {
+            this(op, mode, time, rejectTime, duration, proxyUid, proxyPackage, 0, 0);
+        }
+
+        public OpEntry(int op, int mode, long time, long rejectTime, int duration,
                        int proxyUid, String proxyPackage, int allowedCount, int ignoredCount) {
             mOp = op;
             mMode = mode;
