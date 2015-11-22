@@ -934,7 +934,7 @@ public class SignalStrength implements Parcelable {
         return tdScdmaAsuLevel;
     }
 
-    /**
+   /**
      * @return hash code
      */
     @Override
