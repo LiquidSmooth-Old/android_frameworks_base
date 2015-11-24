@@ -26,4 +26,7 @@
     <!-- Chooser grid background --> 
     <color name="chooser_grid_bg">@color/white</color>
 
-</resources>
+    <!-- Layouts -->
+    <color name="app_permission_icon_tint">@android:color/black</color>
+    
+</resources> 
