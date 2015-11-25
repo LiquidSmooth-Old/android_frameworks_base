@@ -2931,6 +2931,13 @@ public final class Settings {
          * @hide
          */
         public static final String ACCELEROMETER_ROTATION_ANGLES = "accelerometer_rotation_angles";
+        
+        /**
+         * Control whether the accelerometer will be used to change lockscreen
+         * orientation.  If 0, it will not be used; if 1, it will be used by default.
+         * @hide
+         */
+        public static final String LOCKSCREEN_ROTATION = "lockscreen_rotation";
 
         /**
          * Use EdgeGesture Service for system gestures in PhoneWindowManager
@@ -3464,11 +3471,6 @@ public final class Settings {
                 }
             }
         };
-
-        /**
-         * Beginning of PureNexus System Settings Additions
-         * @hide
-         */
 
         /**
          * Boolean value whether to link ringtone and notification volume
