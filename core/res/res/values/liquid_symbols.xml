@@ -54,5 +54,10 @@
   <java-symbol type="integer" name="config_dayColorTemperature" />
   <java-symbol type="integer" name="config_nightColorTemperature" />
   <java-symbol type="integer" name="config_outdoorAmbientLux" />
+  
+  <!-- Unlink notification images -->
+  <java-symbol type="drawable" name="ic_audio_notification_new" />
+  <java-symbol type="drawable" name="ic_audio_notification_mute_new" />
+  <java-symbol type="drawable" name="ic_audio_notification_mute_alpha" />
 
 </resources>
