@@ -2451,6 +2451,7 @@
          permanent error -->
     <bool translatable="false" name="config_protocol_errors_perm_failure">true</bool>
 
+<<<<<<< HEAD
     <string-array name="origin_carrier_names">
         <item>CHINA\u0020\u0020MOBILE</item>
         <item>CMCC</item>
@@ -2493,6 +2494,44 @@
     <string name="config_rat_2g" translatable="false">2G</string>
     <string name="config_rat_3g" translatable="false">3G</string>
     <string name="config_rat_4g" translatable="false">4G</string>
+=======
+    <!-- External CM Services list -->
+    <string-array name="config_externalCMServices"></string-array>
+
+    <!-- Timeout in MS for how long you have to long-press the back key to
+         kill the foreground app. -->
+    <integer name="config_backKillTimeout">2000</integer>
+
+    <!-- Setting to false will disable CM's IME switcher implementation for tablets -->
+    <bool name="config_show_cmIMESwitcher">true</bool>
+
+    <!-- The list of components which should be automatically disabled. -->
+    <string-array name="config_disabledComponents" translatable="false">
+    </string-array>
+
+    <!-- The list of components which should be forced to be enabled. -->
+    <string-array name="config_forceEnabledComponents" translatable="false">
+    </string-array>
+
+    <!-- Boolean to enable stk functionality on Samsung phones -->
+    <bool name="config_samsung_stk">false</bool>
+
+    <!-- If a dock provides a lid switch, that lid can be removed. This
+         setting is used to determine, whether lidOpenRotation has to be
+         applied. -->
+    <bool name="config_hasRemovableLid">false</bool>
+
+    <!-- Boolean to enable Stylus gestures -->
+    <bool name="config_stylusGestures">false</bool>
+
+    <!-- Config to enable installation of region locked packages -->
+    <string-array name="config_region_locked_packages" translatable="false">
+    </string-array>
+
+    <!-- Packages in this list should be a union of all packages defined in values-mccxxx (mcc) -->
+    <string-array name="config_restrict_to_region_locked_devices" translatable="false">
+    </string-array>
+>>>>>>> 02b9815... SystemUI: Revert CAF UI modifications
 
     <!-- Set initial MaxRetry value for operators -->
     <integer name="config_mdc_initial_max_retry">1</integer>
@@ -2541,6 +2580,20 @@
 
     <!-- Setting to false will disable CM's IME switcher implementation for tablets -->
     <bool name="config_show_cmIMESwitcher">true</bool>
+
+    <!-- Support in Surfaceflinger for blur layers.
+         NOTE: This requires additional hardware-specific code. -->
+    <bool name="config_ui_blur_enabled">false</bool>
+
+    <!-- When config_LTE_RSRP_threshold_type is set to "custom" -->
+    <integer-array name="config_LTE_RSRP_custom_levels">
+        <item>-140</item>
+        <item>-128</item>
+        <item>-118</item>
+        <item>-108</item>
+        <item>-98</item>
+        <item>-44</item>
+    </integer-array>
 
     <!-- The BT name of the keyboard packaged with the device. If this is defined, SystemUI will
          automatically try to pair with it when the device exits tablet mode. -->
