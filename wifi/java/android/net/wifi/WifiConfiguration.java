@@ -440,6 +440,13 @@ public class WifiConfiguration implements Parcelable {
      */
     public int userApproved = USER_UNSPECIFIED;
 
+    /**
+     * @hide
+     * Inactivity time before wifi tethering is disabled.  Here inactivity means no clients
+     * connected.  A value of 0 means the AP will not be disabled when there is no activity
+     */
+    public long wifiApInactivityTimeout;
+
     /** The Below RSSI thresholds are used to configure AutoJoin
      *  - GOOD/LOW/BAD thresholds are used so as to calculate link score
      *  - UNWANTED_SOFT are used by the blacklisting logic so as to handle
@@ -1536,6 +1543,7 @@ public class WifiConfiguration implements Parcelable {
             creationTime = source.creationTime;
             updateTime = source.updateTime;
             SIMNum = source.SIMNum;
+            wifiApInactivityTimeout = source.wifiApInactivityTimeout;
         }
     }
 
@@ -1616,6 +1624,7 @@ public class WifiConfiguration implements Parcelable {
         dest.writeInt(numNoInternetAccessReports);
         dest.writeInt(noInternetAccessExpected ? 1 : 0);
         dest.writeInt(SIMNum);
+        dest.writeLong(wifiApInactivityTimeout);
     }
 
     /** Implement the Parcelable interface {@hide} */
@@ -1693,6 +1702,7 @@ public class WifiConfiguration implements Parcelable {
                 config.numNoInternetAccessReports = in.readInt();
                 config.noInternetAccessExpected = in.readInt() != 0;
                 config.SIMNum = in.readInt();
+                config.wifiApInactivityTimeout = in.readLong();
                 return config;
             }
 
