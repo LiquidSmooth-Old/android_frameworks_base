@@ -2585,13 +2585,11 @@ public class SyncManager {
                 }
                 final Iterator<SyncOperation> operationIterator =
                         mSyncQueue.getOperations().iterator();
-
                 final ActivityManager activityManager
                         = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
                 final Set<Integer> removedUsers = Sets.newHashSet();
                 while (operationIterator.hasNext()) {
                     final SyncOperation op = operationIterator.next();
-
                     // If the user is not running, skip the request.
                     if (!activityManager.isUserRunning(op.target.userId)) {
                         final UserInfo userInfo = mUserManager.getUserInfo(op.target.userId);
@@ -2603,6 +2601,31 @@ public class SyncManager {
                                     + op.target.userId + ": user not running.");
                         }
                         continue;
+                    }
+                    String packageName = getPackageName(op.target);
+                    ApplicationInfo ai = null;
+                    if (packageName != null) {
+                        try {
+                            ai = mContext.getPackageManager().getApplicationInfo(packageName,
+                                    PackageManager.GET_UNINSTALLED_PACKAGES
+                                            | PackageManager.GET_DISABLED_COMPONENTS);
+                        } catch (NameNotFoundException e) {
+                            operationIterator.remove();
+                            mSyncStorageEngine.deleteFromPending(op.pendingOperation);
+                            continue;
+                        }
+                    }
+                    // If app is considered idle, then skip for now and backoff
+                    if (ai != null
+                            && mAppIdleMonitor.isAppIdle(packageName, ai.uid, op.target.userId)) {
+                        increaseBackoffSetting(op);
+                        op.appIdle = true;
+                        if (isLoggable) {
+                            Log.v(TAG, "Sync backing off idle app " + packageName);
+                        }
+                        continue;
+                    } else {
+                        op.appIdle = false;
                     }
                     if (!isOperationValidLocked(op)) {
                         operationIterator.remove();
@@ -2622,32 +2645,9 @@ public class SyncManager {
                         }
                         continue;
                     }
-                    String packageName = getPackageName(op.target);
-                    ApplicationInfo ai = null;
-                    if (packageName != null) {
-                        try {
-                            ai = mContext.getPackageManager().getApplicationInfo(packageName,
-                                    PackageManager.GET_UNINSTALLED_PACKAGES
-                                    | PackageManager.GET_DISABLED_COMPONENTS);
-                        } catch (NameNotFoundException e) {
-                        }
-                    }
-                    // If app is considered idle, then skip for now and backoff
-                    if (ai != null
-                            && mAppIdleMonitor.isAppIdle(packageName, ai.uid, op.target.userId)) {
-                        increaseBackoffSetting(op);
-                        op.appIdle = true;
-                        if (isLoggable) {
-                            Log.v(TAG, "Sync backing off idle app " + packageName);
-                        }
-                        continue;
-                    } else {
-                        op.appIdle = false;
-                    }
                     // Add this sync to be run.
                     operations.add(op);
                 }
-
                 for (Integer user : removedUsers) {
                     // if it's still removed
                     if (mUserManager.getUserInfo(user) == null) {

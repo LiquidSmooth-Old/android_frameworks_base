@@ -268,9 +268,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                 case MSG_SERVICE_STATE_CHANGE:
                     handleServiceStateChange(msg.arg1, (ServiceState) msg.obj);
                     break;
-                case MSG_LOCALE_CHANGED:
-                    handleLocaleChanged();
-                    break;
                 case MSG_SCREEN_TURNED_ON:
                     handleScreenTurnedOn();
                     break;
